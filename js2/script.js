@@ -226,6 +226,11 @@ function clearCalculator() {
 }
 
 function backspace() {
+  // If we're waiting for the next operand, keep the queued operator state intact.
+  if (currentOperator !== null && shouldResetDisplay) {
+    return;
+  }
+
   // Allow editing result after =
   if (shouldResetDisplay) {
     shouldResetDisplay = false;
