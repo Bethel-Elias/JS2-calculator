@@ -156,7 +156,16 @@ function appendDecimal() {
 // --------------------
 
 function setOperator(operator) {
-  // Change active operator color
+  // chain calculation first
+  if (currentOperator !== null && !shouldResetDisplay) {
+    calculateResult();
+  }
+
+  firstNumber = display.textContent;
+  currentOperator = operator;
+  shouldResetDisplay = true;
+
+  // update operator highlight
   operatorButtons.forEach((button) => {
     button.classList.remove("active-operator");
 
@@ -164,17 +173,6 @@ function setOperator(operator) {
       button.classList.add("active-operator");
     }
   });
-
-  // Chain calculations
-  if (currentOperator !== null && !shouldResetDisplay) {
-    calculateResult();
-  }
-
-  firstNumber = display.textContent;
-
-  currentOperator = operator;
-
-  shouldResetDisplay = true;
 }
 
 function calculateResult() {
