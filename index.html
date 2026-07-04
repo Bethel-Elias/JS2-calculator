@@ -13,20 +13,20 @@
 
     <body>
         <main>
-            <div class="calculator">
+            <section class="calculator" aria-label="Calculator">
 
-                <div class="display" id="display">0</div>
+                <output class="display" id="display" aria-live="polite">0</output>
 
-                <div class="buttons">
-                    <div class="row">
+                <section class="buttons" aria-label="Calculator controls">
+                    <div class="row" aria-label="Calculator utility controls">
                         <button class="top-btn clear">AC</button>
                         <button class="top-btn backspace">⌫</button>
                         <button class="top-btn sign">+/-</button>
                         <button class="top-btn percent">%</button>
                     </div>
 
-                    <div class="main-buttons">
-                        <div class="numbers">
+                    <section class="main-buttons">
+                        <section class="numbers" aria-label="Number pad">
 
                             <div class="row">
                                 <button class="number">7</button>
@@ -51,21 +51,21 @@
                                 <button class="decimal">.</button>
                                 <button class="equals">=</button>
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="operators">
+                        <section class="operators" aria-label="Operators">
 
                             <button class="operator">/</button>
                             <button class="operator">*</button>
                             <button class="operator">-</button>
                             <button class="operator">+</button>
 
-                        </div>
+                        </section>
 
-                    </div>
+                    </section>
 
-                </div>
-            </div>
+                </section>
+            </section>
         </main>
 
 
