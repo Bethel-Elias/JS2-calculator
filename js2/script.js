@@ -176,28 +176,23 @@ function appendDecimal() {
 // --------------------
 
 function setOperator(operator) {
-  if (hasError) {
-    return;
-  }
-
-  // Change active operator color
-  clearOperatorHighlight();
-  operatorButtons.forEach((button) => {
-    if (button.textContent === operator) {
-      button.classList.add("active-operator");
-    }
-  });
-
-  // Chain calculations
+  // chain calculation first
   if (currentOperator !== null && !shouldResetDisplay) {
     calculateResult();
   }
 
   firstNumber = display.textContent;
-
   currentOperator = operator;
-
   shouldResetDisplay = true;
+
+  // update operator highlight
+  operatorButtons.forEach((button) => {
+    button.classList.remove("active-operator");
+
+    if (button.textContent === operator) {
+      button.classList.add("active-operator");
+    }
+  });
 }
 
 function calculateResult() {
