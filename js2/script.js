@@ -176,9 +176,17 @@ function appendDecimal() {
 // --------------------
 
 function setOperator(operator) {
+  if (hasError) {
+    return;
+  }
+
   // chain calculation first
   if (currentOperator !== null && !shouldResetDisplay) {
     calculateResult();
+  }
+
+  if (hasError) {
+    return;
   }
 
   firstNumber = display.textContent;
