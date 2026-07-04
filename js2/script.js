@@ -16,7 +16,7 @@ function multiply(a, b) {
 
 function divide(a, b) {
   if (b === 0) {
-    return "undefined";
+    return null;
   }
 
   return a / b;
@@ -70,6 +70,8 @@ const signBtn = document.querySelector(".sign");
 
 const percentBtn = document.querySelector(".percent");
 
+const DIVIDE_BY_ZERO_MESSAGE = "Nice try";
+
 // --------------------
 // Variables
 // --------------------
@@ -82,16 +84,13 @@ let currentOperator = null;
 
 let shouldResetDisplay = false;
 
+let hasError = false;
+
 // --------------------
 // Display Functions
 // --------------------
 
 function updateDisplay(value) {
-  if (value === "undefined") {
-    display.textContent = "Nice try";
-    return;
-  }
-
   if (!isNaN(value) && Number(value).toString().length > 9) {
     display.textContent = Number(value).toExponential(3);
   } else {
@@ -99,7 +98,27 @@ function updateDisplay(value) {
   }
 }
 
+function clearOperatorHighlight() {
+  operatorButtons.forEach((button) => {
+    button.classList.remove("active-operator");
+  });
+}
+
+function showError(message) {
+  hasError = true;
+  firstNumber = "";
+  secondNumber = "";
+  currentOperator = null;
+  shouldResetDisplay = true;
+  display.textContent = message;
+  clearOperatorHighlight();
+}
+
 function appendNumber(number) {
+  if (hasError && shouldResetDisplay) {
+    hasError = false;
+  }
+
   // User started typing second number
   if (shouldResetDisplay) {
     display.textContent = number;
@@ -107,9 +126,7 @@ function appendNumber(number) {
     shouldResetDisplay = false;
 
     // Remove operator highlight here
-    operatorButtons.forEach((button) => {
-      button.classList.remove("active-operator");
-    });
+    clearOperatorHighlight();
 
     return;
   }
@@ -131,6 +148,10 @@ function appendNumber(number) {
 }
 
 function appendDecimal() {
+  if (hasError && shouldResetDisplay) {
+    hasError = false;
+  }
+
   // Start fresh after operator or =
   if (shouldResetDisplay) {
     display.textContent = "0";
@@ -138,9 +159,8 @@ function appendDecimal() {
     shouldResetDisplay = false;
 
     // Remove operator highlight
-    operatorButtons.forEach((button) => {
-      button.classList.remove("active-operator");
-    });
+    clearOperatorHighlight();
+    return;
   }
 
   // Prevent multiple decimals
@@ -156,9 +176,17 @@ function appendDecimal() {
 // --------------------
 
 function setOperator(operator) {
+  if (hasError) {
+    return;
+  }
+
   // chain calculation first
   if (currentOperator !== null && !shouldResetDisplay) {
     calculateResult();
+  }
+
+  if (hasError) {
+    return;
   }
 
   firstNumber = display.textContent;
@@ -176,13 +204,18 @@ function setOperator(operator) {
 }
 
 function calculateResult() {
-  if (currentOperator === null || shouldResetDisplay) {
+  if (hasError || currentOperator === null || shouldResetDisplay) {
     return;
   }
 
   secondNumber = display.textContent;
 
   let result = operate(currentOperator, firstNumber, secondNumber);
+
+  if (result === null) {
+    showError(DIVIDE_BY_ZERO_MESSAGE);
+    return;
+  }
 
   // Round decimals
   if (typeof result === "number") {
@@ -198,9 +231,7 @@ function calculateResult() {
   shouldResetDisplay = true;
 
   // Remove operator highlight after =
-  operatorButtons.forEach((button) => {
-    button.classList.remove("active-operator");
-  });
+  clearOperatorHighlight();
 }
 
 // --------------------
@@ -216,14 +247,19 @@ function clearCalculator() {
 
   shouldResetDisplay = false;
 
+  hasError = false;
+
   updateDisplay("0");
 
-  operatorButtons.forEach((button) => {
-    button.classList.remove("active-operator");
-  });
+  clearOperatorHighlight();
 }
 
 function backspace() {
+  if (hasError) {
+    clearCalculator();
+    return;
+  }
+
   // If we're waiting for the next operand, keep the queued operator state intact.
   if (currentOperator !== null && shouldResetDisplay) {
     return;
@@ -242,6 +278,10 @@ function backspace() {
 }
 
 function toggleSign() {
+  if (hasError) {
+    return;
+  }
+
   let currentValue = display.textContent;
 
   if (currentValue === "0") {
@@ -256,6 +296,10 @@ function toggleSign() {
 }
 
 function convertPercent() {
+  if (hasError) {
+    return;
+  }
+
   let currentValue = parseFloat(display.textContent);
 
   if (isNaN(currentValue)) {
